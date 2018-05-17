@@ -4,98 +4,48 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * 管理员页面跳转
+ * 后台控制器
  */
 @Controller
 @RequestMapping("/web")
-public class WebController {
+public class webController {
     /**
-     * 管理员登录页跳转
+     * 管理员登录页
      * @return
      */
-    @RequestMapping(value = {"/","/index"})
+    @RequestMapping({"/","index"})
     public String index(){
-        return "/admin/login";
-    }
-    /**
-     * 管理员添加页面跳转
-     * @return
-     */
-    @RequestMapping("/register")
-    public String register(){
-        return "/admin/register";
+        return "html/web/index";
     }
 
     /**
-     * 管理员管理页跳转
+     * 信息页
      * @return
      */
-    @RequestMapping("/adminsInfo")
-    public String adminsInfo(){
-        return "/admin/adminsInfo";
+    @RequestMapping("/info")
+    public String info(){
+        return "html/web/info";
     }
 
     /**
-     * 管理员信息修改页
+     * 管理员列表
      * @return
      */
-    @RequestMapping("/adminInfo")
-    public String adminInfo(){
-       return "/admin/adminInfo";
+    @RequestMapping("infos")
+    public String infos(){
+        return "/html/web/infos";
+    }
+    @RequestMapping("/jupadate")
+    public String update(){
+        return "html/web/jupdate";
     }
 
     /**
-     * 用户管理跳转
+     * 添加公告跳转
      * @return
      */
-    @RequestMapping("usersInfo")
-    public String usersInfo(){
-        return "admin/usersInfo";
+    @RequestMapping("/addNotice")
+    public String notice(){
+        return "html/web/add";
     }
-
-    /**
-     * 救助页跳转
-     * @return
-     */
-    @RequestMapping("/Apply")
-    public String Applay(){
-        return "admin/Applays";
-    }
-
-    /**
-     * 义卖物品审核跳转
-     * @return
-     */
-    @RequestMapping("/goods")
-    public String goods(){
-        return "admin/goods";
-    }
-
-    /**
-     * 用户账单列表页
-     * @return
-     */
-    @RequestMapping("moneyList")
-    public String moneyList(){
-        return "admin/moneyList";
-    }
-
-    /**
-     * 用户定单页跳转
-     * @return
-     */
-    @RequestMapping("orderList")
-    public String orderList(){
-        return "admin/ordersUserInfo";
-    }
-
-    /**
-     * 用户捐赠查看
-     * @return
-     */
-    @RequestMapping("myjuanzhen")
-    public String juanzhen(){
-        return "admin/myjuanzhen";
-    }
-
 }

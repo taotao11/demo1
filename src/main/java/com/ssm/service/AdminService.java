@@ -1,7 +1,7 @@
 package com.ssm.service;
 
-import com.ssm.entity.Admin;
 import com.baomidou.mybatisplus.service.IService;
+import com.ssm.entity.Admin;
 
 /**
  * <p>

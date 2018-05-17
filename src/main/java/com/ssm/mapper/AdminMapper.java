@@ -1,7 +1,7 @@
 package com.ssm.mapper;
 
-import com.ssm.entity.Admin;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.ssm.entity.Admin;
 
 /**
  * <p>

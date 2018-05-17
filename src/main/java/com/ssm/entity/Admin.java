@@ -13,7 +13,7 @@ import java.io.Serializable;
  * </p>
  *
  * @author 
- * @since 2018-04-11
+ * @since 2018-05-17
  */
 public class Admin extends Model<Admin> {
 

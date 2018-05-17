@@ -2,24 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssm.mapper.UserMapper">
 
-
+    <!-- 开启二级缓存 -->
+    <!--<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>-->
 
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.ssm.entity.User">
         <id column="id" property="id" />
         <result column="zh" property="zh" />
         <result column="name" property="name" />
+        <result column="title" property="title" />
         <result column="pwd" property="pwd" />
         <result column="sex" property="sex" />
         <result column="email" property="email" />
         <result column="ipone" property="ipone" />
         <result column="creat_time" property="creatTime" />
         <result column="update_time" property="updateTime" />
+        <result column="url" property="url" />
+        <result column="kpi" property="kpi" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, zh, name, pwd, sex, email, ipone, creat_time AS creatTime, update_time AS updateTime
+        id, zh, name, title, pwd, sex, email, ipone, creat_time AS creatTime, update_time AS updateTime, url, kpi
     </sql>
 
 </mapper>

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.ssm</groupId>
-    <artifactId>com.ssm</artifactId>
+    <artifactId>tourism</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
 
@@ -254,6 +254,14 @@
             <artifactId>webmagic-extension</artifactId>
             <version>0.6.1</version>
         </dependency>
+        <!-- 导入oracle包 -->
+        <!-- https://mvnrepository.com/artifact/com.oracle/ojdbc6 -->
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>12.1.0.1-atlassian-hosted</version>
+            <scope>test</scope>
+        </dependency>
         <!--mybatis-puls mybatis 增强工具-->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -268,7 +276,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>hugo</finalName>
+    	<finalName>hugo</finalName>
         <resources>
             <resource>
                 <directory>src/main/java</directory>
@@ -279,6 +287,7 @@
             </resource>
         </resources>
         <plugins>
+        	
             <plugin>
                 <groupId>org.mybatis.generator</groupId>
                 <artifactId>mybatis-generator-maven-plugin</artifactId>
@@ -287,6 +296,15 @@
                     <verbose>true</verbose>
                     <overwrite>true</overwrite>
                 </configuration>
+            </plugin>
+            <plugin>  
+                <groupId>org.apache.maven.plugins</groupId>  
+                <artifactId>maven-compiler-plugin</artifactId>  
+                <version>2.3.2</version>  
+                <configuration>  
+                    <source>1.6</source>  
+                    <target>1.6</target>  
+                </configuration>  
             </plugin>
         </plugins>
     </build>

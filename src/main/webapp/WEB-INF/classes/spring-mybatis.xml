@@ -79,7 +79,7 @@
                 SQLSERVER2005->`sqlserver2005`
                 SQLSERVER->`sqlserver`
             -->
-        <!--<property name="dbType" value="oracle"/>-->
+        <property name="dbType" value="mysql"/>
         <!-- 全局表为下划线命名设置 true -->
         <property name="dbColumnUnderline" value="true"/>
     </bean>

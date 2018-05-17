@@ -3,17 +3,14 @@ package com.ssm.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.ssm.common.SelectForm;
+
 import com.ssm.entity.Admin;
-import com.ssm.entity.User;
 import com.ssm.service.AdminService;
-import com.ssm.utils.GetUUid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -44,7 +41,7 @@ public class AdminController {
 
         //current 第几页 size 条数
         Page<Admin> page = adminService.selectPage(new Page<Admin>(current,5),new EntityWrapper<Admin>());
-       mv.setViewName("/admin/adminsInfo");
+       mv.setViewName("html/web/infos");
        mv.addObject("page",page);
         return mv;
     }
@@ -60,7 +57,7 @@ public class AdminController {
         System.out.println(admin);
        List<Admin> list =  adminService.selectList(new EntityWrapper<Admin>().eq("zh",admin.getZh()));
         if (list.size() < 0){
-            mv.setViewName("/admin/register");
+            mv.setViewName("/html/web/info");
             mv.addObject("error","账号已经存在,请更换账号!!");
             return mv;
         }
@@ -69,13 +66,13 @@ public class AdminController {
             boolean isInsert = adminService.insert(admin);
             if (isInsert){
                 mv.addObject("success","新增成功!!!");
-                mv.setViewName("/admin/adminsInfo");
+                mv.setViewName("/html/web/infos");
             }else {
-                mv.setViewName("/admin/register");
+                mv.setViewName("/html/web/info");
                 mv.addObject("error","未知错误,请重试!!");
             }
         }catch (Exception e){
-            mv.setViewName("/admin/register");
+            mv.setViewName("/html/web/info");
             mv.addObject("error",e.getMessage());
         }
 
@@ -91,19 +88,19 @@ public class AdminController {
     @RequestMapping("/update")
     public ModelAndView updateAdmin(Admin admin,HttpSession session){
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/adminInfo");
+        mv.setViewName("/html/web/info");
         System.out.println(admin);
         admin.setUpdateTime(new Date());
         boolean isupdae = adminService.updateById(admin);
         if(isupdae){
-
             mv.addObject("success","修改成功！！！");
             Admin adminSession = adminService.selectById(admin.getId());
             //重置session
             session.setAttribute("admin",adminSession);
             return mv;
+        }else {
+            mv.addObject("error", "修改成功!!!");
         }
-        mv.addObject("error","修改失败!!!");
         return mv;
     }
 
@@ -115,7 +112,7 @@ public class AdminController {
     @RequestMapping("/deleteAdmin")
     public ModelAndView deleteAdmin(long id){
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/adminsInfo");
+        mv.setViewName("/html/web/infos");
         //删除
         boolean isDelete = adminService.deleteById(id);
         if(isDelete){
@@ -126,19 +123,6 @@ public class AdminController {
         return mv;
     }
 
-    /**
-     * 管理员高级查询
-     * @param form
-     * @return
-     */
-    @RequestMapping("/heightSelect")
-    public Page<Admin> heightSelectAdmin(SelectForm form){
-        //得到查询条件
-        EntityWrapper<Admin> wrapper = GetUUid.heightSelect(new EntityWrapper<Admin>(),form);
-        Page<Admin> page = new Page<Admin>(form.getCurrent(),10);
-        Page<Admin> pages = adminService.selectPage(page,wrapper);
-        return pages;
-    }
 
     /**
      * 管理员登录
@@ -155,15 +139,15 @@ public class AdminController {
         );
         if (admins.size() == 0){
             mv.addObject("error","用户名密码不正确");
-            mv.setViewName("/admin/login");
+            mv.setViewName("/html/web/index");
             return mv;
         }
         Admin admin = admins.get(0);
         if (admin.getPwd().equals(pwd)){
             session.setAttribute("admin",admin);
-            mv.setViewName("/admin/index");
+            mv.setViewName("/html/web/info");
         }else {
-            mv.setViewName("/admin/login");
+            mv.setViewName("/html/web/index");
             mv.addObject("error","用户名密码不正确");
         }
 
@@ -178,7 +162,7 @@ public class AdminController {
     public String layout(HttpSession session){
         session.setAttribute("admin",null);
 
-        return "admin/login";
+        return "html/web/index";
     }
 }
 

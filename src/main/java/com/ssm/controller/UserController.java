@@ -3,10 +3,12 @@ package com.ssm.controller;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.ssm.common.SelectForm;
+import com.ssm.entity.Img;
 import com.ssm.entity.User;
+import com.ssm.service.ImgService;
 import com.ssm.service.UserService;
-import com.ssm.utils.GetUUid;
+import com.ssm.utils.UploadFlies;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,13 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -35,7 +38,63 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private ImgService imgService;
 
+    /**
+     * 添加头像
+     * @param id
+     * @param file
+     * @param request
+     * @return
+     */
+    @RequestMapping("/addImg")
+    public ModelAndView addImg(long id, MultipartFile file, HttpServletRequest request){
+        System.out.println(id);
+        ModelAndView mv = new ModelAndView();
+        //图片接收格式
+        String path = request.getSession().getServletContext().getRealPath("WEB-INF/page/res/uimg");
+        String type = file.getOriginalFilename().substring(file.getOriginalFilename().length() -4);
+        List<String> list = new ArrayList<String>();
+        String name = new Date().getTime() + type;
+        list.add(".jpg");
+        list.add(".gif");
+        list.add(".png");
+        boolean isType = false;
+        if (file != null){
+            //格式检查
+            for (String s : list){
+                if (type.equals(s)){
+                    isType = true;
+                }
+            }
+            if (isType){
+                try {
+                    UploadFlies.uploadFile(file.getBytes(),path,name);
+
+                    List<Img> imgs = imgService.selectList(new EntityWrapper<Img>().eq("u_id",id));
+                    if (imgs.size() == 0){
+                        Img img = new Img();
+                        img.setuId(id);
+                        img.setImgUrl("res/uimg/" + name);
+                        imgService.insert(img);
+                    }else {
+                        imgs.get(0).setImgUrl("res/uimg/" + name);
+                        imgService.updateById(imgs.get(0));
+                    }
+
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    mv.addObject("error",e.getMessage());
+                }
+                mv.addObject("success","上传成功!!");
+            }else {
+              mv.addObject("error","格式不正确");
+            }
+        }
+        mv.setViewName("html/user/set");
+        return mv;
+    }
     /**
      * 所有用户查询
      * @param current
@@ -46,22 +105,9 @@ public class UserController {
         ModelAndView mv = new ModelAndView();
         //Page<User>(current,10) current 第几页 10 条数
         Page<User> page = userService.selectPage(new Page<User>(current,10),new EntityWrapper<User>());
-        mv.setViewName("/admin/usersInfo");
+        mv.setViewName("/html/web/users");
         mv.addObject("page",page);
         return mv;
-    }
-    /**
-     * 会员高级查询
-     * @param form
-     * @return
-     */
-    @RequestMapping("/heightSelect")
-    public Page<User> heightSelectAdmin(SelectForm form){
-        //得到查询条件
-        EntityWrapper<User> wrapper = GetUUid.heightSelect(new EntityWrapper<User>(),form);
-        Page<User> page = new Page<User>(form.getCurrent(),10);
-        Page<User> pages = userService.selectPage(page,wrapper);
-        return pages;
     }
 
     /**
@@ -77,18 +123,18 @@ public class UserController {
         int count = userService.selectCount(new EntityWrapper<User>().eq("zh",user.getZh()));
         if (count > 0){
             mv.addObject("error","存在账号请重试!!");
+            mv.setViewName("html/user/reg");
+            return mv;
         }
         user.setCreatTime(new Date());
-        //默认金币为0
-        user.setMeny(0);
        boolean isInsert =  userService.insert(user);
        if (isInsert){
            mv.addObject("message","注册成功,请登录！！！");
-           mv.setViewName("login");
+           mv.setViewName("html/user/login");
            return mv;
        }else {
            mv.addObject("error","请填写完整后重试！！");
-           mv.setViewName("register");
+           mv.setViewName("html/user/reg");
            return mv;
        }
     }
@@ -105,11 +151,11 @@ public class UserController {
         boolean isUpdate = userService.updateById(user);
         if (isUpdate){
             session.setAttribute("user",user);
-            mv.setViewName("userInfo");
+            mv.setViewName("html/user/set");
             mv.addObject("success","修改成功!!");
             return mv;
         }else {
-            mv.setViewName("userInfo");
+            mv.setViewName("html/user/set");
             mv.addObject("error","修改失败，请重试!!!");
             return mv;
         }
@@ -124,7 +170,7 @@ public class UserController {
     @ResponseBody
     public ModelAndView deleteUser(long id){
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/admin/usersInfo");
+        mv.setViewName("/html/web/users");
         boolean isDelete = userService.deleteById(id);
         if (isDelete){
 
@@ -157,16 +203,20 @@ public class UserController {
         );
         if (users.size() == 0){
             mv.addObject("error","用户名密码不正确,请重试!!");
-            mv.setViewName("login");
+            mv.setViewName("/html/user/login");
             return  mv;
         }
         User user = users.get(0);
         if (user.getPwd().equals(pwd)){
+            List<Img> imgs = imgService.selectList(new EntityWrapper<Img>().eq("u_id",user.getId()));
+            if (imgs.size() != 0) {
+            	user.setUrl(imgs.get(0).getImgUrl());
+			}
             session.setAttribute("user",user);
-            mv.setViewName("index");
+            mv.setViewName("/html/index");
         }else {
             mv.addObject("error","用户名密码不正确,请重试!!");
-            mv.setViewName("login");
+            mv.setViewName("/html/user/login");
             return mv;
         }
 
@@ -177,7 +227,7 @@ public class UserController {
     public ModelAndView layout(HttpSession session){
       session.setAttribute("user",null);
       ModelAndView mv = new ModelAndView();
-      mv.setViewName("login");
+      mv.setViewName("/html/index");
       return mv;
     }
 }

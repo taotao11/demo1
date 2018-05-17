@@ -1,7 +1,7 @@
 package com.ssm.service;
 
-import com.ssm.entity.User;
 import com.baomidou.mybatisplus.service.IService;
+import com.ssm.entity.User;
 
 /**
  * <p>

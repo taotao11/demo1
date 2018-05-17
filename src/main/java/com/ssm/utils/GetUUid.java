@@ -1,9 +1,5 @@
 package com.ssm.utils;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.ssm.common.SelectForm;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,28 +21,6 @@ public class GetUUid {
         return uuid.replaceAll("-", "");
     }
 
-    /**
-     * 通用高级查询方法
-     *  ne、neq不相等，   gt大于， lt小于 gte、ge大于等于   lte、le 小于等于   not非
-     * @param wrapper
-     * @param form
-     * @return
-     */
-    public static EntityWrapper heightSelect(EntityWrapper wrapper, SelectForm form){
-        if (form.getName() != null && form.getName().equals("")) {
-            wrapper.eq("name", form.getName());
-        }
-        if (form.getBenginTime() != null && form.getEndTime() != null) {
-            wrapper.between("creat_time", form.getBenginTime(), form.getEndTime());
-            return wrapper;
-        }else if(form.getBenginTime() != null) {
-            wrapper.ge("creat_time",form.getBenginTime());
-            return wrapper;
-        }else {
-            wrapper.le("creat_time",form.getEndTime());
-        }
-        return wrapper;
-    }
     /**
      * Date对象转换成 yy--mm--dd
      * @return
