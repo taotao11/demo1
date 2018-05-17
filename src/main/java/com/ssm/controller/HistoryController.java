@@ -1,0 +1,21 @@
+package com.ssm.controller;
+
+
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import org.springframework.stereotype.Controller;
+
+/**
+ * <p>
+ *  前端控制器
+ * </p>
+ *
+ * @author 
+ * @since 2018-05-17
+ */
+@Controller
+@RequestMapping("/history")
+public class HistoryController {
+
+}
+
